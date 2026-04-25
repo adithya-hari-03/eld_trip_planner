@@ -1,0 +1,211 @@
+import { useParams } from "wouter";
+import { useGetTrip, getGetTripQueryKey } from "@workspace/api-client-react";
+import { Header } from "@/components/layout/Header";
+import { TripMap } from "@/components/TripMap";
+import { EldLog } from "@/components/EldLog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { MapPin, Clock, CalendarDays, AlertTriangle, Printer, Navigation, Fuel, Coffee, Moon, PowerOff } from "lucide-react";
+
+export default function TripDetails() {
+  const { id } = useParams();
+  const { data: trip, isLoading, error } = useGetTrip(id!, {
+    query: { enabled: !!id, queryKey: getGetTripQueryKey(id!) }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-muted/30">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-muted-foreground font-medium animate-pulse">Loading trip details...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !trip) {
+    return (
+      <div className="min-h-screen flex flex-col bg-muted/30">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto border-destructive/50 mt-12">
+            <CardContent className="pt-6 text-center">
+              <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Trip Not Found</h2>
+              <p className="text-muted-foreground mb-6">
+                We couldn't load the details for this trip. It may have been deleted or the link is invalid.
+              </p>
+              <Button onClick={() => window.history.back()} variant="outline">Go Back</Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  const fuelStopsCount = trip.stops.filter(s => s.kind === "fuel").length;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const getStopIcon = (kind: string) => {
+    switch (kind) {
+      case "start": return <PowerOff className="h-4 w-4" />;
+      case "pickup": return <MapPin className="h-4 w-4" />;
+      case "dropoff": return <MapPin className="h-4 w-4" />;
+      case "fuel": return <Fuel className="h-4 w-4" />;
+      case "rest_30min": return <Coffee className="h-4 w-4" />;
+      case "rest_10hr": return <Moon className="h-4 w-4" />;
+      case "reset_34hr": return <Moon className="h-4 w-4" />;
+      case "end_of_day": return <PowerOff className="h-4 w-4" />;
+      default: return <Navigation className="h-4 w-4" />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-muted/30 print:bg-white">
+      <div className="no-print">
+        <Header />
+      </div>
+      
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 no-print">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Trip Details</h1>
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <span>Created {new Date(trip.createdAt).toLocaleString()}</span>
+              <span>•</span>
+              <span className="font-mono">ID: {trip.id.substring(0, 8)}</span>
+            </div>
+          </div>
+          <Button onClick={handlePrint} className="self-start md:self-auto gap-2">
+            <Printer className="h-4 w-4" />
+            Print ELD Logs
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-8 no-print">
+          <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
+            <MapPin className="h-3 w-3 mr-1" /> Current: {trip.request.currentLocation}
+          </Badge>
+          <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
+            <Navigation className="h-3 w-3 mr-1 text-blue-500" /> Pickup: {trip.request.pickupLocation}
+          </Badge>
+          <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
+            <Navigation className="h-3 w-3 mr-1 text-red-500" /> Dropoff: {trip.request.dropoffLocation}
+          </Badge>
+          <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
+            <Clock className="h-3 w-3 mr-1" /> Cycle Used: {trip.request.currentCycleUsed} hrs
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12 no-print">
+          <div className="lg:col-span-2 space-y-8">
+            <Card className="overflow-hidden">
+              <div className="h-[450px]">
+                <TripMap geometry={trip.geometry} stops={trip.stops} />
+              </div>
+            </Card>
+
+            {trip.warnings && trip.warnings.length > 0 && (
+              <Card className="border-amber-500 bg-amber-500/10">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-amber-700 dark:text-amber-500 flex items-center gap-2 text-base">
+                    <AlertTriangle className="h-5 w-5" />
+                    Trip Warnings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-amber-900 dark:text-amber-400 font-medium">
+                    {trip.warnings.map((warning, i) => (
+                      <li key={i}>{warning}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Trip Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground flex items-center gap-2"><Navigation className="h-4 w-4" /> Total Distance</span>
+                  <span className="font-bold font-mono text-lg">{Math.round(trip.totalDistanceMiles)} mi</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground flex items-center gap-2"><Clock className="h-4 w-4" /> Drive Time</span>
+                  <span className="font-bold font-mono text-lg">{trip.totalDrivingHours.toFixed(1)} hrs</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground flex items-center gap-2"><Clock className="h-4 w-4" /> Total Duration</span>
+                  <span className="font-bold font-mono text-lg">{trip.totalTripHours.toFixed(1)} hrs</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground flex items-center gap-2"><CalendarDays className="h-4 w-4" /> Days Required</span>
+                  <span className="font-bold font-mono text-lg">{trip.totalDays}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground flex items-center gap-2"><Fuel className="h-4 w-4" /> Fuel Stops</span>
+                  <span className="font-bold font-mono text-lg">{fuelStopsCount}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Itinerary Timeline</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative pl-6 border-l-2 border-muted space-y-6">
+                  {trip.stops.map((stop, idx) => (
+                    <div key={idx} className="relative">
+                      <div className="absolute -left-[35px] top-1 bg-card rounded-full p-1 border-2 border-primary text-primary">
+                        {getStopIcon(stop.kind)}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm capitalize">{stop.kind.replace(/_/g, ' ')}</h4>
+                        <p className="text-sm font-medium">{stop.label}</p>
+                        <div className="text-xs text-muted-foreground mt-1 flex flex-col gap-1">
+                          <span>{new Date(stop.arrivalTime).toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</span>
+                          <span>Mile {Math.round(stop.mileMarker)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="print:block print:w-full">
+          <div className="no-print mb-6">
+            <h2 className="text-2xl font-bold">Driver's Daily Logs</h2>
+            <p className="text-muted-foreground">FMCSA-compliant Hours of Service records generated for this trip.</p>
+          </div>
+          
+          <div className="space-y-8 print:space-y-0">
+            {trip.dailyLogs.map((log, idx) => (
+              <EldLog key={idx} log={log} />
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

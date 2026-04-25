@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ELD Trip Planner API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: trips
+    description: Trip planning and ELD log generation
 paths:
   /healthz:
     get:
@@ -24,6 +26,81 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /trips/plan:
+    post:
+      operationId: planTrip
+      tags: [trips]
+      summary: Plan a trip and generate ELD logs
+      description: Takes trip inputs, computes the route, schedules HOS-compliant stops and rests, and produces filled-out daily log sheets. Result is persisted and returned.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlanTripRequest"
+      responses:
+        "200":
+          description: Trip plan generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripPlan"
+        "400":
+          description: Invalid input or geocoding failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /trips:
+    get:
+      operationId: listTrips
+      tags: [trips]
+      summary: List recently planned trips
+      responses:
+        "200":
+          description: List of trips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TripSummary"
+  /trips/{id}:
+    get:
+      operationId: getTrip
+      tags: [trips]
+      summary: Retrieve a previously generated trip plan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Trip plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripPlan"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /trips/stats:
+    get:
+      operationId: getTripStats
+      tags: [trips]
+      summary: Aggregate stats across saved trips
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripStats"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +110,260 @@ components:
           type: string
       required:
         - status
-
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    PlanTripRequest:
+      type: object
+      properties:
+        currentLocation:
+          type: string
+          minLength: 2
+          description: Free-form address or place for the driver's current location
+        pickupLocation:
+          type: string
+          minLength: 2
+        dropoffLocation:
+          type: string
+          minLength: 2
+        currentCycleUsed:
+          type: number
+          minimum: 0
+          maximum: 70
+          description: Hours already used in the current 70hr/8day cycle
+      required:
+        - currentLocation
+        - pickupLocation
+        - dropoffLocation
+        - currentCycleUsed
+    GeoPoint:
+      type: object
+      properties:
+        label:
+          type: string
+        address:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+      required: [label, address, lat, lon]
+    RouteGeometry:
+      type: object
+      description: GeoJSON LineString of the full route in [lon, lat] order
+      properties:
+        type:
+          type: string
+          enum: [LineString]
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+      required: [type, coordinates]
+    Stop:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+            - start
+            - pickup
+            - dropoff
+            - fuel
+            - rest_30min
+            - rest_10hr
+            - reset_34hr
+            - end_of_day
+        label:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        arrivalTime:
+          type: string
+          format: date-time
+        departureTime:
+          type: string
+          format: date-time
+        durationHours:
+          type: number
+        mileMarker:
+          type: number
+          description: Cumulative miles from start of trip when this stop occurs
+        notes:
+          type: string
+      required:
+        - kind
+        - label
+        - lat
+        - lon
+        - arrivalTime
+        - departureTime
+        - durationHours
+        - mileMarker
+    DutyEvent:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [off_duty, sleeper_berth, driving, on_duty_not_driving]
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        location:
+          type: string
+        remarks:
+          type: string
+      required: [status, startTime, endTime, location]
+    DailyLog:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date in YYYY-MM-DD (home terminal local)
+        dayNumber:
+          type: integer
+        startOdometer:
+          type: number
+        endOdometer:
+          type: number
+        totalMilesDriving:
+          type: number
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/DutyEvent"
+        totals:
+          type: object
+          properties:
+            offDuty:
+              type: number
+            sleeperBerth:
+              type: number
+            driving:
+              type: number
+            onDutyNotDriving:
+              type: number
+          required: [offDuty, sleeperBerth, driving, onDutyNotDriving]
+        fromLocation:
+          type: string
+        toLocation:
+          type: string
+      required:
+        - date
+        - dayNumber
+        - startOdometer
+        - endOdometer
+        - totalMilesDriving
+        - events
+        - totals
+        - fromLocation
+        - toLocation
+    TripPlan:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        request:
+          $ref: "#/components/schemas/PlanTripRequest"
+        currentPoint:
+          $ref: "#/components/schemas/GeoPoint"
+        pickupPoint:
+          $ref: "#/components/schemas/GeoPoint"
+        dropoffPoint:
+          $ref: "#/components/schemas/GeoPoint"
+        totalDistanceMiles:
+          type: number
+        totalDrivingHours:
+          type: number
+        totalTripHours:
+          type: number
+        totalDays:
+          type: integer
+        geometry:
+          $ref: "#/components/schemas/RouteGeometry"
+        stops:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stop"
+        dailyLogs:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyLog"
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - createdAt
+        - request
+        - currentPoint
+        - pickupPoint
+        - dropoffPoint
+        - totalDistanceMiles
+        - totalDrivingHours
+        - totalTripHours
+        - totalDays
+        - geometry
+        - stops
+        - dailyLogs
+        - warnings
+    TripSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        currentLabel:
+          type: string
+        pickupLabel:
+          type: string
+        dropoffLabel:
+          type: string
+        totalDistanceMiles:
+          type: number
+        totalDays:
+          type: integer
+      required:
+        - id
+        - createdAt
+        - currentLabel
+        - pickupLabel
+        - dropoffLabel
+        - totalDistanceMiles
+        - totalDays
+    TripStats:
+      type: object
+      properties:
+        totalTrips:
+          type: integer
+        totalMiles:
+          type: number
+        totalDrivingHours:
+          type: number
+        totalRestHours:
+          type: number
+        totalFuelStops:
+          type: integer
+      required:
+        - totalTrips
+        - totalMiles
+        - totalDrivingHours
+        - totalRestHours
+        - totalFuelStops
