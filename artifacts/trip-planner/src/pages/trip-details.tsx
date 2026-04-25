@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { useParams } from "wouter";
 import { useGetTrip, getGetTripQueryKey } from "@workspace/api-client-react";
 import { Header } from "@/components/layout/Header";
@@ -7,13 +8,73 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Clock, CalendarDays, AlertTriangle, Printer, Navigation, Fuel, Coffee, Moon, PowerOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { MapPin, Clock, CalendarDays, AlertTriangle, Printer, Navigation, Fuel, Coffee, Moon, PowerOff, Download, Loader2 } from "lucide-react";
 
 export default function TripDetails() {
   const { id } = useParams();
   const { data: trip, isLoading, error } = useGetTrip(id!, {
     query: { enabled: !!id, queryKey: getGetTripQueryKey(id!) }
   });
+  const logsRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const { toast } = useToast();
+
+  const handleDownloadPdf = async () => {
+    if (!logsRef.current || !trip) return;
+    setIsDownloading(true);
+    try {
+      const [{ default: jsPDF }, html2canvasMod] = await Promise.all([
+        import("jspdf"),
+        import("html2canvas-pro"),
+      ]);
+      const html2canvas = html2canvasMod.default;
+
+      const logCards = Array.from(
+        logsRef.current.querySelectorAll<HTMLElement>("[data-eld-log]")
+      );
+      if (logCards.length === 0) throw new Error("No log sheets to export");
+
+      const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "letter" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 24;
+
+      for (let i = 0; i < logCards.length; i++) {
+        const canvas = await html2canvas(logCards[i], {
+          background: "#ffffff",
+          scale: 2,
+          useCORS: true,
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const availW = pageWidth - margin * 2;
+        const availH = pageHeight - margin * 2;
+        const ratio = Math.min(availW / canvas.width, availH / canvas.height);
+        const w = canvas.width * ratio;
+        const h = canvas.height * ratio;
+        const x = (pageWidth - w) / 2;
+        const y = (pageHeight - h) / 2;
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", x, y, w, h);
+      }
+
+      const filename = `eld-logs-${trip.id.substring(0, 8)}.pdf`;
+      pdf.save(filename);
+      toast({
+        title: "PDF downloaded",
+        description: `${logCards.length} daily log sheet${logCards.length === 1 ? "" : "s"} saved as ${filename}.`,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to generate PDF",
+        description: "Please try again or use the Print option.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -85,10 +146,24 @@ export default function TripDetails() {
               <span className="font-mono">ID: {trip.id.substring(0, 8)}</span>
             </div>
           </div>
-          <Button onClick={handlePrint} className="self-start md:self-auto gap-2">
-            <Printer className="h-4 w-4" />
-            Print ELD Logs
-          </Button>
+          <div className="flex gap-2 self-start md:self-auto">
+            <Button onClick={handlePrint} variant="outline" className="gap-2">
+              <Printer className="h-4 w-4" />
+              Print
+            </Button>
+            <Button
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
+              className="gap-2 bg-gradient-amber text-black hover:opacity-90 shadow-[0_0_20px_-5px_hsl(36_100%_50%/0.6)]"
+            >
+              {isDownloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {isDownloading ? "Generating PDF..." : "Download PDF"}
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-8 no-print">
@@ -199,9 +274,11 @@ export default function TripDetails() {
             <p className="text-muted-foreground">FMCSA-compliant Hours of Service records generated for this trip.</p>
           </div>
           
-          <div className="space-y-8 print:space-y-0">
+          <div ref={logsRef} className="space-y-8 print:space-y-0">
             {trip.dailyLogs.map((log, idx) => (
-              <EldLog key={idx} log={log} />
+              <div key={idx} data-eld-log className="bg-white text-black rounded-lg overflow-hidden">
+                <EldLog log={log} />
+              </div>
             ))}
           </div>
         </div>

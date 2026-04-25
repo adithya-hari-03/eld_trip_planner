@@ -57,3 +57,9 @@ Built per assessment requirements: **React frontend + Django backend**, free map
 ## Theme
 
 Vibrant dark cockpit theme: deep navy background with amber/orange accent gradients, color-coded stat tiles, glowing primary CTA, leaflet map, SVG-rendered FMCSA log grid.
+
+## Exports
+
+The trip details page exposes:
+- **Print** — uses `window.print()` with `@media print` styles to print all daily logs.
+- **Download PDF** — uses `jspdf` + `html2canvas-pro` to render each daily log card to a canvas and stitch them into a multi-page landscape Letter-size PDF, saved as `eld-logs-<id>.pdf`.
