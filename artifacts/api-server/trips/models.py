@@ -19,6 +19,13 @@ class Trip(models.Model):
     total_rest_hours = models.FloatField(default=0)
     total_fuel_stops = models.IntegerField(default=0)
     total_days = models.IntegerField(default=1)
+    driver_name = models.CharField(max_length=200, blank=True, default="")
+    co_driver_name = models.CharField(max_length=200, blank=True, default="")
+    carrier_name = models.CharField(max_length=200, blank=True, default="")
+    home_terminal = models.CharField(max_length=200, blank=True, default="")
+    vehicle_number = models.CharField(max_length=100, blank=True, default="")
+    trailer_number = models.CharField(max_length=100, blank=True, default="")
+    shipping_doc_number = models.CharField(max_length=100, blank=True, default="")
     plan = models.JSONField()
 
     class Meta:

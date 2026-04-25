@@ -26,4 +26,11 @@ export interface TripPlan {
   stops: Stop[];
   dailyLogs: DailyLog[];
   warnings: string[];
+  driverName?: string;
+  coDriverName?: string;
+  carrierName?: string;
+  homeTerminal?: string;
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  shippingDocNumber?: string;
 }

@@ -13,6 +13,18 @@ from .services import plan_trip as run_plan_trip
 logger = logging.getLogger(__name__)
 
 
+def _driver_block(trip: Trip) -> dict:
+    return {
+        "driverName": trip.driver_name,
+        "coDriverName": trip.co_driver_name,
+        "carrierName": trip.carrier_name,
+        "homeTerminal": trip.home_terminal,
+        "vehicleNumber": trip.vehicle_number,
+        "trailerNumber": trip.trailer_number,
+        "shippingDocNumber": trip.shipping_doc_number,
+    }
+
+
 def _trip_to_plan(trip: Trip) -> dict:
     plan = dict(trip.plan)
     plan["id"] = trip.id
@@ -22,7 +34,20 @@ def _trip_to_plan(trip: Trip) -> dict:
         "pickupLocation": trip.pickup_location,
         "dropoffLocation": trip.dropoff_location,
         "currentCycleUsed": trip.current_cycle_used,
+        **_driver_block(trip),
     }
+    driver = _driver_block(trip)
+    plan.update(driver)
+    # Inject driver block into each daily log so the React EldLog can render
+    # the standard FMCSA paper-log header without re-fetching trip metadata.
+    for log in plan.get("dailyLogs", []) or []:
+        log.setdefault("driverName", driver["driverName"])
+        log.setdefault("coDriverName", driver["coDriverName"])
+        log.setdefault("carrierName", driver["carrierName"])
+        log.setdefault("homeTerminal", driver["homeTerminal"])
+        log.setdefault("vehicleNumber", driver["vehicleNumber"])
+        log.setdefault("trailerNumber", driver["trailerNumber"])
+        log.setdefault("shippingDocNumber", driver["shippingDocNumber"])
     return plan
 
 
@@ -50,6 +75,14 @@ def plan_trip(request: Request) -> Response:
     if current_cycle_used < 0 or current_cycle_used > 70:
         return Response({"error": "currentCycleUsed must be between 0 and 70."}, status=400)
 
+    driver_name = str(body.get("driverName") or "").strip()
+    co_driver_name = str(body.get("coDriverName") or "").strip()
+    carrier_name = str(body.get("carrierName") or "").strip()
+    home_terminal = str(body.get("homeTerminal") or "").strip()
+    vehicle_number = str(body.get("vehicleNumber") or "").strip()
+    trailer_number = str(body.get("trailerNumber") or "").strip()
+    shipping_doc_number = str(body.get("shippingDocNumber") or "").strip()
+
     try:
         plan = run_plan_trip(
             current_location=current_location,
@@ -69,6 +102,13 @@ def plan_trip(request: Request) -> Response:
         pickup_location=pickup_location,
         dropoff_location=dropoff_location,
         current_cycle_used=current_cycle_used,
+        driver_name=driver_name,
+        co_driver_name=co_driver_name,
+        carrier_name=carrier_name,
+        home_terminal=home_terminal,
+        vehicle_number=vehicle_number,
+        trailer_number=trailer_number,
+        shipping_doc_number=shipping_doc_number,
         total_distance_miles=plan["totalDistanceMiles"],
         total_driving_hours=plan["totalDrivingHours"],
         total_rest_hours=plan.get("totalRestHours", 0.0),
@@ -91,18 +131,23 @@ def list_trips(_request: Request) -> Response:
             "dropoffLabel": (t.plan.get("dropoffPoint") or {}).get("label", t.dropoff_location),
             "totalDistanceMiles": t.total_distance_miles,
             "totalDays": t.total_days,
+            "driverName": t.driver_name,
+            "carrierName": t.carrier_name,
         }
         for t in trips
     ]
     return Response(payload)
 
 
-@api_view(["GET"])
-def get_trip(_request: Request, trip_id: str) -> Response:
+@api_view(["GET", "DELETE"])
+def trip_detail(request: Request, trip_id: str) -> Response:
     try:
         trip = Trip.objects.get(pk=trip_id)
     except Trip.DoesNotExist:
         return Response({"error": "Trip not found."}, status=404)
+    if request.method == "DELETE":
+        trip.delete()
+        return Response(status=204)
     return Response(_trip_to_plan(trip))
 
 

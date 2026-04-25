@@ -19,4 +19,11 @@ export interface DailyLog {
   totals: DailyLogTotals;
   fromLocation: string;
   toLocation: string;
+  driverName?: string;
+  coDriverName?: string;
+  carrierName?: string;
+  homeTerminal?: string;
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  shippingDocNumber?: string;
 }

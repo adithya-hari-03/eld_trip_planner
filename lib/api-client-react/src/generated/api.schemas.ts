@@ -29,6 +29,18 @@ export interface PlanTripRequest {
    * @maximum 70
    */
   currentCycleUsed: number;
+  /** Name of the driver, printed on each log sheet */
+  driverName?: string;
+  coDriverName?: string;
+  /** Motor carrier / company name */
+  carrierName?: string;
+  /** Driver's home-terminal city/address */
+  homeTerminal?: string;
+  /** Truck / tractor number */
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  /** BOL / manifest / shipping document number */
+  shippingDocNumber?: string;
 }
 
 export interface GeoPoint {
@@ -115,6 +127,13 @@ export interface DailyLog {
   totals: DailyLogTotals;
   fromLocation: string;
   toLocation: string;
+  driverName?: string;
+  coDriverName?: string;
+  carrierName?: string;
+  homeTerminal?: string;
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  shippingDocNumber?: string;
 }
 
 export interface TripPlan {
@@ -132,6 +151,13 @@ export interface TripPlan {
   stops: Stop[];
   dailyLogs: DailyLog[];
   warnings: string[];
+  driverName?: string;
+  coDriverName?: string;
+  carrierName?: string;
+  homeTerminal?: string;
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  shippingDocNumber?: string;
 }
 
 export interface TripSummary {
@@ -142,6 +168,8 @@ export interface TripSummary {
   dropoffLabel: string;
   totalDistanceMiles: number;
   totalDays: number;
+  driverName?: string;
+  carrierName?: string;
 }
 
 export interface TripStats {

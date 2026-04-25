@@ -342,6 +342,90 @@ export function useGetTrip<
 }
 
 /**
+ * @summary Delete a previously generated trip plan
+ */
+export const getDeleteTripUrl = (id: string) => {
+  return `/api/trips/${id}`;
+};
+
+export const deleteTrip = async (
+  id: string,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteTripUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteTripMutationOptions = <
+  TError = ErrorType<ApiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteTrip>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteTrip>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["deleteTrip"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteTrip>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteTrip(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteTripMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteTrip>>
+>;
+
+export type DeleteTripMutationError = ErrorType<ApiError>;
+
+/**
+ * @summary Delete a previously generated trip plan
+ */
+export const useDeleteTrip = <
+  TError = ErrorType<ApiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteTrip>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteTrip>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDeleteTripMutationOptions(options));
+};
+
+/**
  * @summary Aggregate stats across saved trips
  */
 export const getGetTripStatsUrl = () => {

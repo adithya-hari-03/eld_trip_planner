@@ -22,4 +22,16 @@ export interface PlanTripRequest {
    * @maximum 70
    */
   currentCycleUsed: number;
+  /** Name of the driver, printed on each log sheet */
+  driverName?: string;
+  coDriverName?: string;
+  /** Motor carrier / company name */
+  carrierName?: string;
+  /** Driver's home-terminal city/address */
+  homeTerminal?: string;
+  /** Truck / tractor number */
+  vehicleNumber?: string;
+  trailerNumber?: string;
+  /** BOL / manifest / shipping document number */
+  shippingDocNumber?: string;
 }

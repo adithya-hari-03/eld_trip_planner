@@ -14,4 +14,6 @@ export interface TripSummary {
   dropoffLabel: string;
   totalDistanceMiles: number;
   totalDays: number;
+  driverName?: string;
+  carrierName?: string;
 }

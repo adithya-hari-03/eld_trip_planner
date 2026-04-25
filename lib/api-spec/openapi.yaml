@@ -89,6 +89,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteTrip
+      tags: [trips]
+      summary: Delete a previously generated trip plan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /trips/stats:
     get:
       operationId: getTripStats
@@ -135,6 +154,25 @@ components:
           minimum: 0
           maximum: 70
           description: Hours already used in the current 70hr/8day cycle
+        driverName:
+          type: string
+          description: Name of the driver, printed on each log sheet
+        coDriverName:
+          type: string
+        carrierName:
+          type: string
+          description: Motor carrier / company name
+        homeTerminal:
+          type: string
+          description: Driver's home-terminal city/address
+        vehicleNumber:
+          type: string
+          description: Truck / tractor number
+        trailerNumber:
+          type: string
+        shippingDocNumber:
+          type: string
+          description: BOL / manifest / shipping document number
       required:
         - currentLocation
         - pickupLocation
@@ -259,6 +297,20 @@ components:
           type: string
         toLocation:
           type: string
+        driverName:
+          type: string
+        coDriverName:
+          type: string
+        carrierName:
+          type: string
+        homeTerminal:
+          type: string
+        vehicleNumber:
+          type: string
+        trailerNumber:
+          type: string
+        shippingDocNumber:
+          type: string
       required:
         - date
         - dayNumber
@@ -307,6 +359,20 @@ components:
           type: array
           items:
             type: string
+        driverName:
+          type: string
+        coDriverName:
+          type: string
+        carrierName:
+          type: string
+        homeTerminal:
+          type: string
+        vehicleNumber:
+          type: string
+        trailerNumber:
+          type: string
+        shippingDocNumber:
+          type: string
       required:
         - id
         - createdAt
@@ -340,6 +406,10 @@ components:
           type: number
         totalDays:
           type: integer
+        driverName:
+          type: string
+        carrierName:
+          type: string
       required:
         - id
         - createdAt

@@ -60,7 +60,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     {statTiles.map(tile => {
                       const Icon = tile.icon;
-                      const value = (stats as Record<string, number>)[tile.key] ?? 0;
+                      const value = (stats as unknown as Record<string, number>)[tile.key] ?? 0;
                       return (
                         <div
                           key={tile.key}

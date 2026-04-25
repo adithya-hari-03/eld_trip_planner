@@ -40,6 +40,25 @@ export const PlanTripBody = zod.object({
     .min(planTripBodyCurrentCycleUsedMin)
     .max(planTripBodyCurrentCycleUsedMax)
     .describe("Hours already used in the current 70hr\/8day cycle"),
+  driverName: zod
+    .string()
+    .optional()
+    .describe("Name of the driver, printed on each log sheet"),
+  coDriverName: zod.string().optional(),
+  carrierName: zod
+    .string()
+    .optional()
+    .describe("Motor carrier \/ company name"),
+  homeTerminal: zod
+    .string()
+    .optional()
+    .describe("Driver's home-terminal city\/address"),
+  vehicleNumber: zod.string().optional().describe("Truck \/ tractor number"),
+  trailerNumber: zod.string().optional(),
+  shippingDocNumber: zod
+    .string()
+    .optional()
+    .describe("BOL \/ manifest \/ shipping document number"),
 });
 
 export const planTripResponseRequestCurrentLocationMin = 2;
@@ -68,6 +87,25 @@ export const PlanTripResponse = zod.object({
       .min(planTripResponseRequestCurrentCycleUsedMin)
       .max(planTripResponseRequestCurrentCycleUsedMax)
       .describe("Hours already used in the current 70hr\/8day cycle"),
+    driverName: zod
+      .string()
+      .optional()
+      .describe("Name of the driver, printed on each log sheet"),
+    coDriverName: zod.string().optional(),
+    carrierName: zod
+      .string()
+      .optional()
+      .describe("Motor carrier \/ company name"),
+    homeTerminal: zod
+      .string()
+      .optional()
+      .describe("Driver's home-terminal city\/address"),
+    vehicleNumber: zod.string().optional().describe("Truck \/ tractor number"),
+    trailerNumber: zod.string().optional(),
+    shippingDocNumber: zod
+      .string()
+      .optional()
+      .describe("BOL \/ manifest \/ shipping document number"),
   }),
   currentPoint: zod.object({
     label: zod.string(),
@@ -150,9 +188,23 @@ export const PlanTripResponse = zod.object({
       }),
       fromLocation: zod.string(),
       toLocation: zod.string(),
+      driverName: zod.string().optional(),
+      coDriverName: zod.string().optional(),
+      carrierName: zod.string().optional(),
+      homeTerminal: zod.string().optional(),
+      vehicleNumber: zod.string().optional(),
+      trailerNumber: zod.string().optional(),
+      shippingDocNumber: zod.string().optional(),
     }),
   ),
   warnings: zod.array(zod.string()),
+  driverName: zod.string().optional(),
+  coDriverName: zod.string().optional(),
+  carrierName: zod.string().optional(),
+  homeTerminal: zod.string().optional(),
+  vehicleNumber: zod.string().optional(),
+  trailerNumber: zod.string().optional(),
+  shippingDocNumber: zod.string().optional(),
 });
 
 /**
@@ -166,6 +218,8 @@ export const ListTripsResponseItem = zod.object({
   dropoffLabel: zod.string(),
   totalDistanceMiles: zod.number(),
   totalDays: zod.number(),
+  driverName: zod.string().optional(),
+  carrierName: zod.string().optional(),
 });
 export const ListTripsResponse = zod.array(ListTripsResponseItem);
 
@@ -200,6 +254,25 @@ export const GetTripResponse = zod.object({
       .min(getTripResponseRequestCurrentCycleUsedMin)
       .max(getTripResponseRequestCurrentCycleUsedMax)
       .describe("Hours already used in the current 70hr\/8day cycle"),
+    driverName: zod
+      .string()
+      .optional()
+      .describe("Name of the driver, printed on each log sheet"),
+    coDriverName: zod.string().optional(),
+    carrierName: zod
+      .string()
+      .optional()
+      .describe("Motor carrier \/ company name"),
+    homeTerminal: zod
+      .string()
+      .optional()
+      .describe("Driver's home-terminal city\/address"),
+    vehicleNumber: zod.string().optional().describe("Truck \/ tractor number"),
+    trailerNumber: zod.string().optional(),
+    shippingDocNumber: zod
+      .string()
+      .optional()
+      .describe("BOL \/ manifest \/ shipping document number"),
   }),
   currentPoint: zod.object({
     label: zod.string(),
@@ -282,9 +355,30 @@ export const GetTripResponse = zod.object({
       }),
       fromLocation: zod.string(),
       toLocation: zod.string(),
+      driverName: zod.string().optional(),
+      coDriverName: zod.string().optional(),
+      carrierName: zod.string().optional(),
+      homeTerminal: zod.string().optional(),
+      vehicleNumber: zod.string().optional(),
+      trailerNumber: zod.string().optional(),
+      shippingDocNumber: zod.string().optional(),
     }),
   ),
   warnings: zod.array(zod.string()),
+  driverName: zod.string().optional(),
+  coDriverName: zod.string().optional(),
+  carrierName: zod.string().optional(),
+  homeTerminal: zod.string().optional(),
+  vehicleNumber: zod.string().optional(),
+  trailerNumber: zod.string().optional(),
+  shippingDocNumber: zod.string().optional(),
+});
+
+/**
+ * @summary Delete a previously generated trip plan
+ */
+export const DeleteTripParams = zod.object({
+  id: zod.coerce.string(),
 });
 
 /**
