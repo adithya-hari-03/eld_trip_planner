@@ -242,7 +242,7 @@ export default function TripDetails() {
             <Button
               onClick={handleDownloadPdf}
               disabled={isDownloading}
-              className="gap-2 bg-gradient-amber text-black hover:opacity-90 shadow-[0_0_20px_-5px_hsl(36_100%_55%/0.6)]"
+              className="gap-2 bg-gradient-amber text-black hover:opacity-90 shadow-[0_0_20px_-5px_hsl(330_90%_60%/0.6)]"
             >
               {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               {isDownloading ? "Generating PDF..." : "Download PDF"}
@@ -263,13 +263,13 @@ export default function TripDetails() {
             <MapPin className="h-3 w-3 mr-1" /> Current: {trip.request.currentLocation}
           </Badge>
           <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
-            <Navigation className="h-3 w-3 mr-1 text-cyan-400" /> Pickup: {trip.request.pickupLocation}
+            <Navigation className="h-3 w-3 mr-1 text-emerald-400" /> Pickup: {trip.request.pickupLocation}
           </Badge>
           <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
-            <Navigation className="h-3 w-3 mr-1 text-rose-400" /> Dropoff: {trip.request.dropoffLocation}
+            <Navigation className="h-3 w-3 mr-1 text-orange-400" /> Dropoff: {trip.request.dropoffLocation}
           </Badge>
           <Badge variant="secondary" className="bg-card text-foreground border-border px-3 py-1">
-            <Clock className="h-3 w-3 mr-1 text-amber-400" /> Cycle Used: {trip.request.currentCycleUsed} hrs
+            <Clock className="h-3 w-3 mr-1 text-pink-400" /> Cycle Used: {trip.request.currentCycleUsed} hrs
           </Badge>
         </div>
 
@@ -280,7 +280,7 @@ export default function TripDetails() {
                 const Icon = f.icon;
                 return (
                   <div key={f.label} className="flex items-center gap-2 text-sm">
-                    <Icon className="h-3.5 w-3.5 text-cyan-400" />
+                    <Icon className="h-3.5 w-3.5 text-emerald-400" />
                     <span className="text-muted-foreground text-xs uppercase tracking-wider">
                       {f.label}:
                     </span>
@@ -301,15 +301,15 @@ export default function TripDetails() {
             </Card>
 
             {trip.warnings && trip.warnings.length > 0 && (
-              <Card className="border-amber-500/40 bg-amber-500/5">
+              <Card className="border-orange-500/40 bg-orange-500/5">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
+                  <CardTitle className="text-orange-400 flex items-center gap-2 text-base">
                     <AlertTriangle className="h-5 w-5" />
                     Trip Warnings
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="list-disc pl-5 space-y-1 text-sm text-amber-200/90 font-medium">
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-orange-200/90 font-medium">
                     {trip.warnings.map((warning, i) => (
                       <li key={i}>{warning}</li>
                     ))}

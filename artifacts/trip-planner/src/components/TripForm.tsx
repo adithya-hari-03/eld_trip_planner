@@ -106,8 +106,8 @@ export function TripForm() {
 
   return (
     <Card className="w-full bg-gradient-card border-card-border ring-amber-soft relative overflow-hidden">
-      <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
       <CardHeader className="relative">
         <CardTitle className="text-2xl flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
@@ -126,7 +126,7 @@ export function TripForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+                    <MapPin className="h-3.5 w-3.5 text-violet-400" />
                     Current Location
                   </FormLabel>
                   <FormControl>
@@ -144,7 +144,7 @@ export function TripForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Navigation className="h-3.5 w-3.5 text-cyan-400" />
+                      <Navigation className="h-3.5 w-3.5 text-emerald-400" />
                       Pickup Location
                     </FormLabel>
                     <FormControl>
@@ -161,7 +161,7 @@ export function TripForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Flag className="h-3.5 w-3.5 text-rose-400" />
+                      <Flag className="h-3.5 w-3.5 text-orange-400" />
                       Dropoff Location
                     </FormLabel>
                     <FormControl>
@@ -179,7 +179,7 @@ export function TripForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <Clock className="h-3.5 w-3.5 text-amber-400" />
+                    <Clock className="h-3.5 w-3.5 text-pink-400" />
                     Hours Used in Current Cycle
                   </FormLabel>
                   <FormControl>
@@ -200,7 +200,7 @@ export function TripForm() {
                   className="w-full flex items-center justify-between text-left rounded-md border border-dashed border-border bg-background/30 px-4 py-3 text-sm font-medium hover:border-primary/60 hover:bg-background/50 transition-colors"
                 >
                   <span className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-cyan-400" />
+                    <FileText className="h-4 w-4 text-emerald-400" />
                     Driver &amp; Vehicle Info
                     <span className="text-xs font-normal text-muted-foreground">
                       (optional, prints on each log sheet)
@@ -221,7 +221,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <User className="h-3 w-3 text-cyan-400" /> Driver Name
+                          <User className="h-3 w-3 text-emerald-400" /> Driver Name
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="John Smith" {...field} />
@@ -235,7 +235,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <User className="h-3 w-3 text-cyan-400" /> Co-Driver Name
+                          <User className="h-3 w-3 text-emerald-400" /> Co-Driver Name
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="(optional)" {...field} />
@@ -249,7 +249,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <Building2 className="h-3 w-3 text-cyan-400" /> Motor Carrier
+                          <Building2 className="h-3 w-3 text-emerald-400" /> Motor Carrier
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Acme Logistics LLC" {...field} />
@@ -263,7 +263,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <MapPin className="h-3 w-3 text-cyan-400" /> Home Terminal
+                          <MapPin className="h-3 w-3 text-emerald-400" /> Home Terminal
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Home terminal city" {...field} />
@@ -277,7 +277,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <Truck className="h-3 w-3 text-cyan-400" /> Truck / Tractor #
+                          <Truck className="h-3 w-3 text-emerald-400" /> Truck / Tractor #
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="T-1042" {...field} />
@@ -291,7 +291,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <Truck className="h-3 w-3 text-cyan-400" /> Trailer #
+                          <Truck className="h-3 w-3 text-emerald-400" /> Trailer #
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="TR-882" {...field} />
@@ -305,7 +305,7 @@ export function TripForm() {
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
                         <FormLabel className="flex items-center gap-2 text-xs">
-                          <FileText className="h-3 w-3 text-cyan-400" /> BOL / Manifest #
+                          <FileText className="h-3 w-3 text-emerald-400" /> BOL / Manifest #
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Shipping document number" {...field} />
@@ -319,7 +319,7 @@ export function TripForm() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-base font-semibold bg-gradient-amber text-black hover:opacity-90 transition-opacity shadow-[0_0_30px_-5px_hsl(36_100%_55%/0.6)]"
+              className="w-full h-12 text-base font-semibold bg-gradient-amber text-black hover:opacity-90 transition-opacity shadow-[0_0_30px_-5px_hsl(330_90%_60%/0.65)]"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

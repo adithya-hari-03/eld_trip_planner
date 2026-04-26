@@ -7,7 +7,7 @@ export function Header() {
       <div className="h-0.5 w-full bg-gradient-amber" />
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center space-x-3 no-underline group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-amber shadow-[0_0_20px_-2px_hsl(36_100%_50%/0.6)] transition-transform group-hover:scale-105">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-amber shadow-[0_0_20px_-2px_hsl(330_90%_60%/0.6)] transition-transform group-hover:scale-105">
             <Truck className="h-5 w-5 text-black" strokeWidth={2.5} />
           </div>
           <span className="font-bold tracking-tight text-foreground text-lg">

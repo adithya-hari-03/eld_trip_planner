@@ -68,7 +68,7 @@ export default function TripList() {
           </div>
           <Link
             href="/"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-amber text-black hover:opacity-90 h-10 px-4 py-2 shadow-[0_0_20px_-5px_hsl(36_100%_55%/0.6)]"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-amber text-black hover:opacity-90 h-10 px-4 py-2 shadow-[0_0_20px_-5px_hsl(330_90%_60%/0.6)]"
           >
             Plan New Trip
           </Link>
@@ -116,12 +116,12 @@ export default function TripList() {
                       </span>
                       {trip.driverName ? (
                         <span className="flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5 text-cyan-400" />
+                          <User className="h-3.5 w-3.5 text-emerald-400" />
                           {trip.driverName}
                         </span>
                       ) : null}
                       {trip.carrierName ? (
-                        <span className="text-cyan-400/80 font-medium">
+                        <span className="text-emerald-400/80 font-medium">
                           {trip.carrierName}
                         </span>
                       ) : null}
@@ -129,14 +129,14 @@ export default function TripList() {
 
                     <div className="flex items-center gap-3 text-base md:text-lg font-medium">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <MapPin className="h-5 w-5 text-cyan-400 shrink-0" />
+                        <MapPin className="h-5 w-5 text-emerald-400 shrink-0" />
                         <span className="truncate" title={trip.pickupLabel}>
                           {trip.pickupLabel}
                         </span>
                       </div>
                       <ArrowRight className="h-5 w-5 text-primary shrink-0" />
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <MapPin className="h-5 w-5 text-rose-400 shrink-0" />
+                        <MapPin className="h-5 w-5 text-orange-400 shrink-0" />
                         <span className="truncate" title={trip.dropoffLabel}>
                           {trip.dropoffLabel}
                         </span>
@@ -149,7 +149,7 @@ export default function TripList() {
                       <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
                         Distance
                       </span>
-                      <span className="font-mono font-bold text-lg text-amber-400">
+                      <span className="font-mono font-bold text-lg text-pink-400">
                         {Math.round(trip.totalDistanceMiles)} mi
                       </span>
                     </div>
@@ -157,7 +157,7 @@ export default function TripList() {
                       <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
                         Duration
                       </span>
-                      <span className="font-mono font-bold text-lg text-cyan-400">
+                      <span className="font-mono font-bold text-lg text-emerald-400">
                         {trip.totalDays} {trip.totalDays === 1 ? "day" : "days"}
                       </span>
                     </div>

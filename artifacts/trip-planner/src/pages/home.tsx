@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map as MapIcon, Clock, Fuel, Route, History, TrendingUp } from "lucide-react";
 
 const statTiles = [
-  { key: "totalTrips", label: "Total Trips", icon: Route, color: "from-amber-500 to-orange-600", glow: "shadow-amber-500/20" },
-  { key: "totalMiles", label: "Total Miles", icon: MapIcon, color: "from-sky-500 to-blue-600", glow: "shadow-sky-500/20" },
-  { key: "totalDrivingHours", label: "Drive Hours", icon: Clock, color: "from-emerald-500 to-green-600", glow: "shadow-emerald-500/20" },
-  { key: "totalFuelStops", label: "Fuel Stops", icon: Fuel, color: "from-fuchsia-500 to-purple-600", glow: "shadow-fuchsia-500/20" },
+  { key: "totalTrips", label: "Total Trips", icon: Route, color: "from-pink-500 to-fuchsia-600", glow: "shadow-pink-500/25" },
+  { key: "totalMiles", label: "Total Miles", icon: MapIcon, color: "from-violet-500 to-indigo-600", glow: "shadow-violet-500/25" },
+  { key: "totalDrivingHours", label: "Drive Hours", icon: Clock, color: "from-emerald-500 to-teal-600", glow: "shadow-emerald-500/25" },
+  { key: "totalFuelStops", label: "Fuel Stops", icon: Fuel, color: "from-orange-400 to-rose-500", glow: "shadow-orange-500/25" },
 ] as const;
 
 export default function Home() {
